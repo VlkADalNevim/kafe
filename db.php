@@ -4,7 +4,8 @@
     $dbpassword = 'gW3dNylfgyK';
     $dbname = "epiz_32655932_skycrown";
     $connection = mysqli_connect($dbservername, $dbusername, $dbpassword, $dbname);
-      
+    mysql_set_charset('utf8',$connection);
+    
     // Check connection
     if(!$connection){
         die('Database connection error : ' .mysql_error());
