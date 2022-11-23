@@ -1,5 +1,5 @@
 <?php 
-header('Content-type: text/html; charset=UTF-8');
+header('Content-type: text/html; charset=utf-8');
 require_once "db.php";
 
 // Vsichni dohromady
@@ -21,19 +21,8 @@ if (isset($_GET['submit'])) {
                                                 WHERE people.name = '$id'
                                                 GROUP BY types.typ");
 
-    /* Vypis ceny pro jednotlivce
-    $cena = 0;
-    $propito="SELECT types.typ, count(drinks.ID) as pocet
-                FROM drinks
-                INNER JOIN people ON drinks.id_people = people.ID
-                INNER JOIN types ON drinks.id_types = types.ID
-                WHERE people.name = '$id'
-                GROUP BY types.typ";
 
-    $stmt = $connection ->prepare($propito);
-    $stmt -> bind_param("si",$typ, $pocet);
-    $stmt -> execute();
-    */
+
 
     }
 
@@ -42,7 +31,7 @@ if (isset($_GET['submit'])) {
 <!DOCTYPE html>
 <html>
 	<head>
-        <meta charset="UTF-8">
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
         <!-- Responsive Design -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
         <!-- CSS -->
@@ -60,7 +49,7 @@ if (isset($_GET['submit'])) {
                 </tr>
                 <?php while ($vypisCelkove = mysqli_fetch_array($celkove)) { ?>
                     <tr>
-                        <td><?php echo utf8_encode($vypisCelkove['jmeno']); ?></td>
+                        <td><?php echo $vypisCelkove['jmeno']; ?></td>
                         <td><?php echo $vypisCelkove['pocet']; ?></td>
                     </tr>
                 <?php } ?>
@@ -91,16 +80,47 @@ if (isset($_GET['submit'])) {
                         <tr>
                             <td><?php echo $vypisRow['typ']; ?></td>
                             <td><?php echo $vypisRow['pocet']; ?></td>
+                            <?php $celk_cena = $celk_cena + count_all($vypisRow['typ'],$vypisRow['pocet']);?>
                         </tr>
-                    <?php } ?>
+                    <?php }?>
             </table>
 
             <!-- Vypis ceny pro jednotlivce -->
             <a>Propito celkem: </a>
-            <a><?php echo $cena; ?>
-            </a>
+            <a><?php echo round($celk_cena,2) . "Kč"; ?></a>
 
         </div>
-
 	</body>
 </html>
+
+<?php 
+function count_all($typ,$pocet){
+    $cena = 0;
+    switch ($typ) {
+        case 'Mléko':
+            $cena = ($pocet * 13.5);
+            break;
+            
+        case 'Espresso':
+            $cena = ($pocet * 0.3);
+            break;
+
+        case 'Coffe':
+            $cena = ($pocet * 0.3);
+            break;
+    
+        case 'Long':
+            $cena = ($pocet * 0.3);
+            break;
+
+        case 'Doppio+':
+            $cena = ($pocet * 0.3);
+            break;
+        
+        default:
+            return 0;
+            break;
+    }
+    return $cena;
+}
+?>
